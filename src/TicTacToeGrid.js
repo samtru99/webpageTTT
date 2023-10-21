@@ -1,9 +1,9 @@
 //import React from 'react';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageX from './images/X_image';
 import ImageO from './images/O_image';
 
-const PositionedComponent = ({ x, y, playersMove, handlePlayersTurn }) => 
+const PositionedComponent = ({ x, y, playersMove, handlePlayersTurn}) => 
 {
     const [isHovered, setIsHovered] = useState(false);
     const [isPlayed, setIsPlayed] = useState(false);
@@ -20,32 +20,32 @@ const PositionedComponent = ({ x, y, playersMove, handlePlayersTurn }) =>
       transition: 'background-color 0.3s ease',
     };
 
-
     const handleMouseEnter = () => {
         setIsHovered(true);
-      };
+    };
     
-      const handleMouseLeave = () => {
+    const handleMouseLeave = () => {
         setIsHovered(false);
-      };
+    };
 
-      const handleMouseClick = () =>
-      {
+    const handleMouseClick = () =>
+    {
         if(playersMove)
         {
           
           const imageToload = <ImageX x={x} y={y}/>
           setImage(imageToload)
         }
-        else{
+        else
+        {
           const imageToload = <ImageO x={x} y={y}/>
           setImage(imageToload)
         }
         setIsPlayed(true);
         handlePlayersTurn();
-      }
+    }
     return <div> 
-
+        
         {isPlayed ?  
         (
           <>{image}</>
@@ -62,32 +62,78 @@ const PositionedComponent = ({ x, y, playersMove, handlePlayersTurn }) =>
   };
 
 
-const TicTacToeGrid = () => {
+function TicTacToeGrid()
+{
   // Your tic-tac-toe logic goes here
-  const [playersMove, setplayersMove] = useState(true);
-  
-  const handlePlayersTurn = () =>
+  const [playersMove, setPlayersMove] = useState(true);
+  const [symbol, setSymbol] = useState('');
+  const [currPosition, setCurrPosition] = useState(23)
+  const [board, setBoard] = useState(Array(9).fill('_'));
+
+  useEffect(() => {
+    //console.log("Player", symbol, "moved at", currPosition);
+  }, [symbol]);
+
+
+  const handlePlayersTurn = async (position) =>
   {
-    setplayersMove(!playersMove)
-  }
+    
+    if(playersMove)
+    {
+      setSymbol('X')
+    }
+    else
+    {
+      setSymbol('O')
+    }
+
+    setPlayersMove(!playersMove)    
+    setCurrPosition(position)
+
+
+
+    //console.log("Player", symbol, "moved at ", currPosition);  
+  };
+  
+
+  useEffect(()=>
+  {
+    console.log("player ", symbol , "move at ", currPosition)
+    const newBoard = board
+    newBoard[currPosition-1] = symbol
+    const finalBoard = newBoard
+    setBoard(finalBoard);
+
+    console.log("board is now ", board)
+  })
+
+  const positon1 = <PositionedComponent x="0px" y = "0px"  playersMove={playersMove} handlePlayersTurn={() => handlePlayersTurn(1)}/>
+  const positon2 =  <PositionedComponent x="210px" y = "0px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(2)}/>
+  const positon6 =  <PositionedComponent x="420px" y = "0px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(3)}/>
+  const positon3 =  <PositionedComponent x="0px" y = "210px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(4)}/>
+  const positon4 =  <PositionedComponent x="210px" y = "210px"  playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(5)}/>
+  const positon7 =  <PositionedComponent x="420px" y = "210px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(6)}/>
+  const positon5 =  <PositionedComponent x="0px" y = "420px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(7)}/>
+  const positon9 =  <PositionedComponent x="210px" y = "420px"  playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(8)}/>
+  const positon8 =  <PositionedComponent x="420px" y = "420px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(9)}/>
+ 
 
   return (
       <div style={bigSquareStyle}> 
-         <div style={topRow}>  </div>
-         <div style={bottomRow}>  </div>
-         <div style={rightCol}>  </div>
-         <div style={leftCol}>  </div>
-         <position1></position1>
-        <PositionedComponent x="0px" y = "0px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="210px" y = "0px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="0px" y = "210px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="210px" y = "210px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="0px" y = "420px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="420px" y = "0px"  playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="420px" y = "210px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="420px" y = "420px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-        <PositionedComponent x="210px" y = "420px" playersMove={playersMove} handlePlayersTurn={handlePlayersTurn}/>
-      </div>
+          <div style={topRow}>  </div>
+          <div style={bottomRow}>  </div>
+          <div style={rightCol}>  </div>
+          <div style={leftCol}>  </div>
+          {positon1} 
+          {positon2}
+          {positon3}
+          {positon4}
+          {positon5}
+          {positon6}
+          {positon7}
+          {positon8}
+          {positon9}
+         </div>
   );
 }
 
