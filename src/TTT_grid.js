@@ -2,13 +2,15 @@ import {React, useState, useRef, useEffect} from 'react';
 import "./gameOver"
 import isWinner from './gameOver';
 import catScratch from './catScratch';
-
+import model_move from './model';
 const initGame = () => Array.from({ length: 9 }, (_, i) => ({
   position: i,
 }))
 
-function TTT() 
+function TTT({model}) 
 {
+  const [dictionary_counter, setDictionary_counter] = useState(0)
+
   const [playersMove, setPlayersMove] = useState(true)
   const [board, setBoard] = useState(initGame)
   const [game, setGame] = useState(false)
@@ -16,6 +18,7 @@ function TTT()
 
   const [firstUpdate, setFirstUpdate] = useState(true)
   const [didOWin, setDidOWin] = useState(false)
+
 
   const handlePlayersTurn = position => 
   {
@@ -33,6 +36,7 @@ function TTT()
     }))
     // update the current player
 
+    /*
     if(isWinner(board,playersMove))
     {
        setGame(true)
@@ -42,9 +46,8 @@ function TTT()
        }
        return
     }
-
+    */
     setPlayersMove(!playersMove)
-
     
   }
   
@@ -52,13 +55,20 @@ function TTT()
   const availablePositions = board.filter(c => !c.value)
     
   useEffect(() => {
-
     //1st render or someone won
     if (firstUpdate)
     {
       setFirstUpdate(false)
       return
     }
+    //Check did X win
+     if(isWinner(board, false))
+     {
+       console.log("x won ")
+       setGame(true)
+       setDidOWin(false)
+       return
+     }
      //Check did O win
      if(isWinner(board, true))
      {
@@ -86,10 +96,13 @@ function TTT()
     
     // if it's the player's turn or no more positions, skip
     // find an open position
-    const idx = Math.floor(Math.random() * availablePositions.length)
 
+    const move = model_move(board, model[dictionary_counter])
+    console.log("move is ", move)
+    console.log("ava = ", availablePositions)
     // call handlePlayersTurn with open position found
-    handlePlayersTurn(availablePositions[idx].position)
+    handlePlayersTurn(availablePositions[move-1].position)
+    setDictionary_counter((prevCounter) => prevCounter + 1)
     //setGame(isWinner(board, true))
     //setDidOWin(isWinner(board, true))
 
