@@ -36,18 +36,6 @@ function TTT({model})
       value
     }))
     // update the current player
-
-    /*
-    if(isWinner(board,playersMove))
-    {
-       setGame(true)
-       if(playersMove)
-       {
-        setDidOWin(true)
-       }
-       return
-    }
-    */
     setPlayersMove(!playersMove)
     
   }
@@ -65,7 +53,6 @@ function TTT({model})
     //Check did X win
      if(isWinner(board, false))
      {
-       console.log("x won ")
        setGame(true)
        setDidOWin(false)
        return
@@ -73,7 +60,6 @@ function TTT({model})
      //Check did O win
      if(isWinner(board, true))
      {
-       console.log("o won ")
        setGame(true)
        setDidOWin(true)
        return
@@ -97,38 +83,16 @@ function TTT({model})
     
     // if it's the player's turn or no more positions, skip
     // find an open position
-
     const move = model_move(board, model[dictionary_counter])
-    console.log("move is ", move)
-    console.log("len is ", availablePositions.length)
-
     for (let i = 0; i < availablePositions.length; i++) 
     {
       const { position, value } = availablePositions[i];
-      //console.log(`Position: ${position}, Value: ${value}`);
-      // Perform any other actions with position and value as needed
       if(position === move)
       {
         handlePlayersTurn(availablePositions[i].position)
         setDictionary_counter((prevCounter) => prevCounter + 1)
       }
     }
-    
-    /*
-    availablePositions.forEach(({position,value}) => 
-    {
-       console.log(position + " = " + value)
-    });
-    */
-    
-    //const correct_position = board.indexOf(move)
-    //console.log()
-    //console.log("correct position is ", correct_position)
-    // call handlePlayersTurn with open position found
-    //handlePlayersTurn(availablePositions[correct_position].position)
-    //setDictionary_counter((prevCounter) => prevCounter + 1)
-    //setGame(isWinner(board, true))
-    //setDidOWin(isWinner(board, true))
 
   }, [playersMove, availablePositions,firstUpdate,board])
   
@@ -162,21 +126,6 @@ function TTT({model})
     )}
   </div>
 );
-
-  /*
-  return (    
-    <div style={boardStyle}>
-      {board.map(({ position, value }) => (
-        <div
-          {...!value && { onClick: () => handlePlayersTurn(position) }}
-          style={cell}
-          key={position}>
-          {value || '-'}
-        </div>
-      ))}
-    </div>
-  )
-  */
 };
 
 const cell = {

@@ -1,3 +1,10 @@
+/*
+*
+*
+*  OLD IMPLEMENTATION OF BOARD
+*
+*
+*/
 import React, { useState } from 'react';
 
 const Hoverable = (Component) => {

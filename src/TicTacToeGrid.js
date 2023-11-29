@@ -1,10 +1,21 @@
 //import React from 'react';
-import React, { useState, useEffect } from 'react';
+/*
+*
+*
+*  OLD IMPLEMENTATION OF BOARD
+*
+*
+*/
+import React, { useState, useEffect, useRef, forwardRef } from 'react';
 import ImageX from './images/X_image';
 import ImageO from './images/O_image';
+import isWinner from './gameOver';
+import catScratch from './catScratch';
 
-const PositionedComponent = ({ x, y, playersMove, handlePlayersTurn}) => 
-{
+
+
+
+const PositionedComponent = forwardRef(({ x, y, playersMove, handlePlayersTurn}, ref) => {
     const [isHovered, setIsHovered] = useState(false);
     const [isPlayed, setIsPlayed] = useState(false);
     const [image, setImage] = useState(null)
@@ -56,28 +67,32 @@ const PositionedComponent = ({ x, y, playersMove, handlePlayersTurn}) =>
                 onMouseEnter={handleMouseEnter}
                 onMouseLeave={handleMouseLeave} 
                 onClick={handleMouseClick}
+                ref = {ref}
             ></div>
         )}
       </div>
-  };
+  });
 
-
-function TicTacToeGrid()
+function TicTacToeGrid(references)
 {
   // Your tic-tac-toe logic goes here
   const [playersMove, setPlayersMove] = useState(true);
   const [symbol, setSymbol] = useState('');
   const [currPosition, setCurrPosition] = useState(23)
-  const [board, setBoard] = useState(Array(9).fill('_'));
+  const [board, setBoard] = useState(Array(9).fill('-'));
+  const [game, setGame] = useState(false)
+  const  [tie, setTie] = useState(false)
+  //const [board, setBoard] = useState(initGame)
+  const [autoRefs, setAtuoRefs] = useState(references.myarr)
 
-  useEffect(() => {
-    //console.log("Player", symbol, "moved at", currPosition);
-  }, [symbol]);
 
 
+
+  
+  
   const handlePlayersTurn = async (position) =>
   {
-    
+    console.log("in handle function")
     if(playersMove)
     {
       setSymbol('X')
@@ -86,57 +101,82 @@ function TicTacToeGrid()
     {
       setSymbol('O')
     }
-
     setPlayersMove(!playersMove)    
     setCurrPosition(position)
 
-
-
-    //console.log("Player", symbol, "moved at ", currPosition);  
   };
+
+  const positon1 =  <PositionedComponent x="0px" y = "0px"  playersMove={playersMove} handlePlayersTurn={() => handlePlayersTurn(1)}/>
+  const positon2 =  <PositionedComponent x="210px" y = "0px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(2)}/>
+  const positon3 =  <PositionedComponent x="420px" y = "0px"    playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(3)}/>
+  const positon4 =  <PositionedComponent x="0px" y = "210px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(4)}/>
+  const positon5 =  <PositionedComponent x="210px" y = "210px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(5)}/>
+  const positon6 =  <PositionedComponent x="420px" y = "210px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(6)}/>
+  const positon7 =  <PositionedComponent x="0px" y = "420px"    playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(7)}/>
+  const positon8 =  <PositionedComponent x="210px" y = "420px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(8)}/>
+  const positon9 =  <PositionedComponent x="420px" y = "420px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(9)}/>
+  //const allPositions = [positon1,positon2,positon3,positon4,positon5,positon6,positon7,positon8,positon9]
   
 
   useEffect(()=>
   {
-    console.log("player ", symbol , "move at ", currPosition)
-    const newBoard = board
+    console.log("player turn is ", playersMove)
+    if(!playersMove)
+    {
+      console.log("O turn")
+      const randomValue = Math.floor(Math.random() * 10);
+      //console.log("obj is ", autoRefs[randomValue])
+      //autoRefs[randomValue].current.click()
+    }
+    const newBoard = [...board]
     newBoard[currPosition-1] = symbol
     const finalBoard = newBoard
     setBoard(finalBoard);
-
-    console.log("board is now ", board)
-  })
-
-  const positon1 = <PositionedComponent x="0px" y = "0px"  playersMove={playersMove} handlePlayersTurn={() => handlePlayersTurn(1)}/>
-  const positon2 =  <PositionedComponent x="210px" y = "0px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(2)}/>
-  const positon6 =  <PositionedComponent x="420px" y = "0px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(3)}/>
-  const positon3 =  <PositionedComponent x="0px" y = "210px"   playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(4)}/>
-  const positon4 =  <PositionedComponent x="210px" y = "210px"  playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(5)}/>
-  const positon7 =  <PositionedComponent x="420px" y = "210px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(6)}/>
-  const positon5 =  <PositionedComponent x="0px" y = "420px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(7)}/>
-  const positon9 =  <PositionedComponent x="210px" y = "420px"  playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(8)}/>
-  const positon8 =  <PositionedComponent x="420px" y = "420px" playersMove={playersMove} handlePlayersTurn={() =>handlePlayersTurn(9)}/>
+    setGame(isWinner(finalBoard, symbol));
+    setTie(catScratch(board))
+  },[playersMove, currPosition ])
  
-
   return (
-      <div style={bigSquareStyle}> 
-          <div style={topRow}>  </div>
-          <div style={bottomRow}>  </div>
-          <div style={rightCol}>  </div>
-          <div style={leftCol}>  </div>
-          {positon1} 
-          {positon2}
-          {positon3}
-          {positon4}
-          {positon5}
-          {positon6}
-          {positon7}
-          {positon8}
-          {positon9}
-         </div>
+      <div style={bigSquareStyle}>
+      {tie && game != true? (
+         <h1 style={outcomeText}> tie game </h1>
+      ) : (
+        <>
+        {game ? (
+            <>
+            {playersMove ? (<h1 style={outcomeText}> you lost </h1>):(
+              <h1 style={outcomeText}> you won </h1>
+            )}
+            </>
+          ) : (
+            <>
+              <div style={topRow}>  </div>
+              <div style={bottomRow}>  </div>
+              <div style={rightCol}>  </div>
+              <div style={leftCol}>  </div>
+              {positon1}
+              {positon2}
+              {positon3}
+              {positon4}
+              {positon5}
+              {positon6}
+              {positon7}
+              {positon8}
+              {positon9}
+            </>
+            )}
+        </>
+      )}
+    </div>
   );
 }
 
+const outcomeText = {
+  position: 'absolute',
+  top: '30%',
+  left: '40%'
+
+}
 
 const bigSquareStyle = {
     width: '620px',
@@ -180,3 +220,16 @@ const leftCol = {
 
 
 export default TicTacToeGrid;
+
+
+/*
+  const handleAutoClick = (position) => {
+    console.log("clicking random with val ", position)
+    // Programmatically trigger a click on the component
+    const randomValue = Math.floor(Math.random() * 10);
+    console.log("randon val is ", randomValue)
+    let _this = autoClick[randomValue]
+    console.log("this is ", _this)
+    _this.current.click()
+   //autoClick[randomValue].current.click();
+  */
